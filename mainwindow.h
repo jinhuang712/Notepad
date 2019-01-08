@@ -29,6 +29,10 @@ private slots:
 
     void on_actionSave_triggered();
 
+    void on_bye_clicked();
+
+    void on_centralWidget_customContextMenuRequested(const QPoint &pos);
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";

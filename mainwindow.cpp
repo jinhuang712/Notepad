@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setCentralWidget(ui->textEdit);
+    this->setCentralWidget(ui->centralWidget);
 }
 
 MainWindow::~MainWindow()
@@ -50,4 +50,15 @@ void MainWindow::on_actionSave_triggered()
     QString text = ui->textEdit->toPlainText();
     out << text;
     file.close();
+}
+
+void MainWindow::on_bye_clicked()
+{
+    QString currentText = ui->textEdit->toPlainText();
+    ui->textEdit->setText(currentText + "bye");
+}
+
+void MainWindow::on_centralWidget_customContextMenuRequested(const QPoint &pos)
+{
+
 }
