@@ -79,31 +79,14 @@ void MainWindow::on_bye_clicked()
     ui->textEdit->setText(currentText + "bye");
 }
 
-void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
+void MainWindow::itemUpdate_changeText(QListWidgetItem *item)
 {
     QListWidgetItem* curr = ui->listWidget->item(0);
-    if (currItem) { // if current item is the first item
-        if (item == curr) {
-            // if current item is the first item and the first item is clicked
-            return; // do nothing
-        }
-        QFile fileTmp("D:\\daoai\\Notepad\\sys\\temp");
-        if (!fileTmp.open(QFile::WriteOnly | QFile::Text)) {
-            QMessageBox::warning(this, "Warning", "Cannot save file: " + fileTmp.errorString());
-            return;
-        }
-        QTextStream out(&fileTmp);
-        QString tmp_output = ui->textEdit->toPlainText();
-        out << tmp_output;
-        fileTmp.close();
-    }
     QString tmp;
     if (curr == item) {
         tmp = "D:\\daoai\\Notepad\\sys\\temp";
-        currItem = true;
     } else {
         tmp = "D:\\daoai\\Notepad\\saved\\" + item->text();
-        currItem = false;
     }
     QFile file(tmp);
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
@@ -114,4 +97,33 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
     QString text = in.readAll();
     ui->textEdit->setText(text);
     file.close();
+}
+
+void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    qDebug() << "check";
+    QListWidgetItem* curr = ui->listWidget->item(0);
+    if (previous == nullptr) {
+        return;
+    }
+    if (current == previous) {
+        return;
+    }
+    // if previous is curr
+    QString filename;
+    if (previous == curr) {
+        filename = "D:\\daoai\\Notepad\\sys\\temp";
+    } else {
+        filename = "D:\\daoai\\Notepad\\saved\\"+previous->text();
+    }
+    QFile file(filename);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    QTextStream out(&file);
+    QString tmp_output = ui->textEdit->toPlainText();
+    out << tmp_output;
+    file.close();
+    itemUpdate_changeText(current);
 }

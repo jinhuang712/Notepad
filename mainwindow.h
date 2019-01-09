@@ -9,6 +9,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QDebug>
 
 
 namespace Ui {
@@ -37,11 +38,12 @@ private slots:
 
     void on_bye_clicked();
 
-    void on_listWidget_itemClicked(QListWidgetItem *item);
+    void itemUpdate_changeText(QListWidgetItem *item);
+
+    void on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
 private:
     QString currentFile = "";
-    bool currItem = true;
 };
 
 #endif // MAINWINDOW_H
