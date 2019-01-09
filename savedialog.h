@@ -33,6 +33,7 @@ private:
     Ui::SaveDialog *ui;
     QString content;
     MainWindow* mainwindow;
+    Ui::MainWindow* main_ui;
 };
 
 #endif // SAVEDIALOG_H

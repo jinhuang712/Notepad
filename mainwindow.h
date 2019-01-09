@@ -11,7 +11,6 @@
 #include <QListWidgetItem>
 #include <QDebug>
 
-
 namespace Ui {
 class MainWindow;
 }
@@ -26,8 +25,6 @@ public:
     Ui::MainWindow *ui;
 
 private slots:
-    void on_actionOpen_triggered();
-
     void on_actionNew_triggered();
 
     void on_actionSave_triggered();
@@ -44,6 +41,7 @@ private slots:
 
 private:
     QString currentFile = "";
+    void closeEvent (QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H

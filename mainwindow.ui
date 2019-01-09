@@ -88,8 +88,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionClear"/>
     <addaction name="actionSave"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -103,22 +102,13 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionNew">
+  <action name="actionClear">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/images/ninja</normaloff>:/images/ninja</iconset>
    </property>
    <property name="text">
-    <string>New</string>
-   </property>
-  </action>
-  <action name="actionOpen">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/ninja</normaloff>:/images/ninja</iconset>
-   </property>
-   <property name="text">
-    <string>Open</string>
+    <string>Clear</string>
    </property>
   </action>
   <action name="actionSave">

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "savedialog.h"
+#include <QCloseEvent>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,6 +18,24 @@ MainWindow::~MainWindow()
     QFile temp("D:\\daoai\\Notepad\\sys\\temp");
     temp.remove();
     delete ui;
+}
+
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Exiting..",
+                                                                tr("Do you wish to save?\n"),
+                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn == QMessageBox::No) {
+        event->accept();
+    } else if (resBtn == QMessageBox::Cancel){
+        event->ignore();
+    } else if (resBtn == QMessageBox::Yes) {
+        SaveDialog dialog;
+        dialog.setContent(ui->textEdit->toPlainText());
+        dialog.exec();
+        event->accept();
+    }
 }
 
 void MainWindow::populateListItems()
@@ -45,22 +65,6 @@ void MainWindow::on_actionNew_triggered()
 {
     currentFile.clear();
     ui->textEdit->setText(QString());
-}
-
-void MainWindow::on_actionOpen_triggered()
-{
-    QString filename = QFileDialog::getOpenFileName(this, "Open the File");
-    QFile file(filename);
-    currentFile = filename;
-    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
-        return;
-    }
-    setWindowTitle(filename);
-    QTextStream in(&file);
-    QString text = in.readAll();
-    ui->textEdit->setText(text);
-    file.close();
 }
 
 void MainWindow::on_actionSave_triggered()
