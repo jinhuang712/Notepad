@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "savedialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,11 +8,37 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setCentralWidget(ui->centralWidget);
+    populateListItems();
 }
 
 MainWindow::~MainWindow()
 {
+    QFile temp("D:\\daoai\\Notepad\\sys\\temp");
+    temp.remove();
     delete ui;
+}
+
+void MainWindow::populateListItems()
+{
+    QDir dir("D:\\daoai\\Notepad\\saved");
+    QFileInfoList list = dir.entryInfoList();
+    for (int i = 2; i < list.size(); i++) {
+        QFileInfo fileInfo = list.at(i);
+        ui->listWidget->addItem(fileInfo.fileName());
+    }
+}
+
+void MainWindow::updateListItems()
+{
+    QListWidgetItem curr = *(ui->listWidget->item(0));
+    ui->listWidget->clear();
+    ui->listWidget->addItem(&curr);
+    QDir dir("D:\\daoai\\Notepad\\saved");
+    QFileInfoList list = dir.entryInfoList();
+    for (int i = 2; i < list.size(); i++) {
+        QFileInfo fileInfo = list.at(i);
+        ui->listWidget->addItem(fileInfo.fileName());
+    }
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -38,18 +65,12 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_actionSave_triggered()
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Save the File");
-    QFile file(filename);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
-        return;
-    }
-    currentFile = filename;
-    setWindowTitle(filename);
-    QTextStream out(&file);
-    QString text = ui->textEdit->toPlainText();
-    out << text;
-    file.close();
+    // attempt
+    SaveDialog dialog(this);
+    dialog.setModal(true);
+    dialog.setContent(ui->textEdit->toPlainText());
+    dialog.exec();
+    updateListItems();
 }
 
 void MainWindow::on_bye_clicked()
@@ -58,7 +79,39 @@ void MainWindow::on_bye_clicked()
     ui->textEdit->setText(currentText + "bye");
 }
 
-void MainWindow::on_centralWidget_customContextMenuRequested(const QPoint &pos)
+void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
-
+    QListWidgetItem* curr = ui->listWidget->item(0);
+    if (currItem) { // if current item is the first item
+        if (item == curr) {
+            // if current item is the first item and the first item is clicked
+            return; // do nothing
+        }
+        QFile fileTmp("D:\\daoai\\Notepad\\sys\\temp");
+        if (!fileTmp.open(QFile::WriteOnly | QFile::Text)) {
+            QMessageBox::warning(this, "Warning", "Cannot save file: " + fileTmp.errorString());
+            return;
+        }
+        QTextStream out(&fileTmp);
+        QString tmp_output = ui->textEdit->toPlainText();
+        out << tmp_output;
+        fileTmp.close();
+    }
+    QString tmp;
+    if (curr == item) {
+        tmp = "D:\\daoai\\Notepad\\sys\\temp";
+        currItem = true;
+    } else {
+        tmp = "D:\\daoai\\Notepad\\saved\\" + item->text();
+        currItem = false;
+    }
+    QFile file(tmp);
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
+        return;
+    }
+    QTextStream in(&file);
+    QString text = in.readAll();
+    ui->textEdit->setText(text);
+    file.close();
 }

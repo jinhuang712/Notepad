@@ -21,7 +21,16 @@
     </size>
    </property>
    <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0" colspan="2">
+    <item row="2" column="0">
+     <widget class="QListWidget" name="listWidget">
+      <item>
+       <property name="text">
+        <string>new File..</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="1">
      <widget class="QTextEdit" name="textEdit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -31,7 +40,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="3" column="0">
      <widget class="QPushButton" name="bye">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -127,4 +136,7 @@
   <include location="resources.qrc"/>
  </resources>
  <connections/>
+ <slots>
+  <slot>showed()</slot>
+ </slots>
 </ui>
