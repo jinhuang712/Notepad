@@ -21,8 +21,10 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
     Ui::MainWindow *ui;
+    ~MainWindow();
+    void updateList(QString name);
+
 
 private slots:
     void on_actionNew_triggered();

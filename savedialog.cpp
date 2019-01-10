@@ -1,6 +1,7 @@
 #include "savedialog.h"
 #include "ui_savedialog.h"
 #include "mainwindow.h"
+#include <QCloseEvent>
 
 SaveDialog::SaveDialog(QWidget *parent) :
     QDialog(parent),
@@ -9,15 +10,18 @@ SaveDialog::SaveDialog(QWidget *parent) :
     ui->setupUi(this);
 }
 
-SaveDialog::SaveDialog(MainWindow* mainwindow) :
+SaveDialog::SaveDialog(QString content,
+                       QWidget *parent) :
+    QDialog(parent),
     ui(new Ui::SaveDialog)
 {
     ui->setupUi(this);
-    this->mainwindow = mainwindow;
+    this->content = content;
 }
 
 SaveDialog::~SaveDialog()
 {
+    qDebug() << "check";
     delete ui;
 }
 
@@ -26,11 +30,14 @@ void SaveDialog::setContent(QString cont)
     this->content = cont;
 }
 
+void SaveDialog::setMain(MainWindow *main) {
+    this->main = main;
+}
+
 void SaveDialog::on_pushButton_clicked()
 {
-    // todo
-    QString filename = "D:\\daoai\\Notepad\\saved\\" + ui->lineEdit->text();
-    QFile file(filename);
+    QString filename = ui->lineEdit->text();
+    QFile file( "D:\\daoai\\Notepad\\saved\\" + filename);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
@@ -38,5 +45,6 @@ void SaveDialog::on_pushButton_clicked()
     QTextStream out(&file);
     out << content;
     file.close();
+    this->main->updateList(filename);
     this->close();
 }

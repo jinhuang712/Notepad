@@ -20,6 +20,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::updateList(QString name)
+{
+    ui->listWidget->item(0)->setText(name);
+}
+
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Exiting..",
@@ -31,8 +36,9 @@ void MainWindow::closeEvent (QCloseEvent *event)
     } else if (resBtn == QMessageBox::Cancel){
         event->ignore();
     } else if (resBtn == QMessageBox::Yes) {
-        SaveDialog dialog;
-        dialog.setContent(ui->textEdit->toPlainText());
+        SaveDialog dialog(ui->textEdit->toPlainText());
+//        dialog.setContent(ui->textEdit->toPlainText());
+        dialog.setMain(this);
         dialog.exec();
         event->accept();
     }
@@ -70,11 +76,9 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     // attempt
-    SaveDialog dialog(this);
-    dialog.setModal(true);
-    dialog.setContent(ui->textEdit->toPlainText());
+    SaveDialog dialog(ui->textEdit->toPlainText());
+    dialog.setMain(this);
     dialog.exec();
-    updateListItems();
 }
 
 void MainWindow::on_bye_clicked()
@@ -105,7 +109,6 @@ void MainWindow::itemUpdate_changeText(QListWidgetItem *item)
 
 void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
-    qDebug() << "check";
     QListWidgetItem* curr = ui->listWidget->item(0);
     if (previous == nullptr) {
         return;

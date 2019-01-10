@@ -22,9 +22,10 @@ class SaveDialog : public QDialog
 
 public:
     explicit SaveDialog(QWidget *parent = nullptr);
-    explicit SaveDialog(MainWindow* mainwindow);
+    explicit SaveDialog(QString content, QWidget *parent = nullptr);
     ~SaveDialog();
     void setContent(QString content);
+    void setMain(MainWindow *main);
 
 private slots:
     void on_pushButton_clicked();
@@ -32,8 +33,7 @@ private slots:
 private:
     Ui::SaveDialog *ui;
     QString content;
-    MainWindow* mainwindow;
-    Ui::MainWindow* main_ui;
+    MainWindow* main;
 };
 
 #endif // SAVEDIALOG_H
