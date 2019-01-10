@@ -21,7 +21,6 @@ SaveDialog::SaveDialog(QString content,
 
 SaveDialog::~SaveDialog()
 {
-    qDebug() << "check";
     delete ui;
 }
 

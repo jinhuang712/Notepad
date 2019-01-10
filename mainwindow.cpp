@@ -15,8 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    QFile temp("D:\\daoai\\Notepad\\sys\\temp");
-    temp.remove();
+    clearCache();
     delete ui;
 }
 
@@ -35,6 +34,11 @@ void MainWindow::updateList(QListWidgetItem* item)
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
+    QFile cache("D:\\daoai\\Notepad\\sys\\cache");
+    if (!cache.exists() && ui->textEdit->toPlainText().size() == 0) {
+        event->accept();
+        return;
+    }
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Exiting..",
                                                                 tr("Do you wish to save?\n"),
                                                                 QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
@@ -73,20 +77,12 @@ void MainWindow::on_actionNew_triggered()
     ui->textEdit->setText(QString());
 }
 
-void MainWindow::on_actionSave_triggered()
-{
-    // attempt
-    SaveDialog dialog(ui->textEdit->toPlainText());
-    dialog.setMain(this);
-    dialog.exec();
-}
-
-void MainWindow::itemUpdate_changeText(QListWidgetItem *item)
+void MainWindow::update_textEdit_after_itemUpdate(QListWidgetItem *item)
 {
     QListWidgetItem* curr = ui->listWidget->item(0);
     QString tmp;
     if (curr == item) {
-        tmp = "D:\\daoai\\Notepad\\sys\\temp";
+        tmp = "D:\\daoai\\Notepad\\sys\\cache";
     } else {
         tmp = "D:\\daoai\\Notepad\\saved\\" + item->text();
     }
@@ -113,7 +109,7 @@ void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QLis
     // if previous is curr
     QString filename;
     if (previous == curr) {
-        filename = "D:\\daoai\\Notepad\\sys\\temp";
+        filename = "D:\\daoai\\Notepad\\sys\\cache";
     } else {
         filename = "D:\\daoai\\Notepad\\saved\\"+previous->text();
     }
@@ -126,24 +122,33 @@ void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QLis
     QString tmp_output = ui->textEdit->toPlainText();
     out << tmp_output;
     file.close();
-    itemUpdate_changeText(current);
-}
-
-void MainWindow::on_actionClear_triggered()
-{
-    ui->textEdit->setText("");
+    if (previous == curr) {
+        clearCache();
+    }
+    update_textEdit_after_itemUpdate(current);
 }
 
 void MainWindow::on_deleteItem_clicked()
 {
     QList<QListWidgetItem*> list = ui->listWidget->selectedItems();
-    for (auto item : list) {
+    for (QListWidgetItem* item : list) {
         deleteItem(item);
     }
 }
 
+void MainWindow::clearCache() {
+    QFile file("D:\\daoai\\Notepad\\sys\\cache");
+    file.remove();
+}
+
 void MainWindow::deleteItem(QListWidgetItem* item)
 {
+    if (ui->listWidget->item(0) == item) {
+        item->setText("New File..");
+        ui->textEdit->setText("");
+        clearCache();
+        return;
+    }
     QString filename = item->text();
     updateList(item);
     QFile file("D:\\daoai\\Notepad\\saved\\"+filename);
@@ -151,4 +156,18 @@ void MainWindow::deleteItem(QListWidgetItem* item)
         QMessageBox::warning(this, "Warning", "Cannot delete file: " + file.errorString());
         return;
     }
+}
+
+void MainWindow::on_saveItem_clicked()
+{
+    SaveDialog dialog(ui->textEdit->toPlainText());
+    dialog.setMain(this);
+    dialog.exec();
+}
+
+void MainWindow::on_newItem_clicked()
+{
+//    SaveDialog dialog(ui->textEdit->toPlainText());
+//    dialog.setMain(this);
+//    dialog.exec();
 }
