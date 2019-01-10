@@ -25,6 +25,14 @@ void MainWindow::updateList(QString name)
     ui->listWidget->item(0)->setText(name);
 }
 
+void MainWindow::updateList(QListWidgetItem* item)
+{
+     ui->listWidget->removeItemWidget(item);
+     int row = ui->listWidget->row(item);
+     item = ui->listWidget->takeItem(row);
+//     delete item;
+}
+
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Exiting..",
@@ -56,15 +64,7 @@ void MainWindow::populateListItems()
 
 void MainWindow::updateListItems()
 {
-    QListWidgetItem curr = *(ui->listWidget->item(0));
-    ui->listWidget->clear();
-    ui->listWidget->addItem(&curr);
-    QDir dir("D:\\daoai\\Notepad\\saved");
-    QFileInfoList list = dir.entryInfoList();
-    for (int i = 2; i < list.size(); i++) {
-        QFileInfo fileInfo = list.at(i);
-        ui->listWidget->addItem(fileInfo.fileName());
-    }
+
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -79,12 +79,6 @@ void MainWindow::on_actionSave_triggered()
     SaveDialog dialog(ui->textEdit->toPlainText());
     dialog.setMain(this);
     dialog.exec();
-}
-
-void MainWindow::on_bye_clicked()
-{
-    QString currentText = ui->textEdit->toPlainText();
-    ui->textEdit->setText(currentText + "bye");
 }
 
 void MainWindow::itemUpdate_changeText(QListWidgetItem *item)
@@ -133,4 +127,28 @@ void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QLis
     out << tmp_output;
     file.close();
     itemUpdate_changeText(current);
+}
+
+void MainWindow::on_actionClear_triggered()
+{
+    ui->textEdit->setText("");
+}
+
+void MainWindow::on_deleteItem_clicked()
+{
+    QList<QListWidgetItem*> list = ui->listWidget->selectedItems();
+    for (auto item : list) {
+        deleteItem(item);
+    }
+}
+
+void MainWindow::deleteItem(QListWidgetItem* item)
+{
+    QString filename = item->text();
+    updateList(item);
+    QFile file("D:\\daoai\\Notepad\\saved\\"+filename);
+    if (!file.remove()) {
+        QMessageBox::warning(this, "Warning", "Cannot delete file: " + file.errorString());
+        return;
+    }
 }

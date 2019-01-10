@@ -24,7 +24,7 @@ public:
     Ui::MainWindow *ui;
     ~MainWindow();
     void updateList(QString name);
-
+    void updateList(QListWidgetItem*);
 
 private slots:
     void on_actionNew_triggered();
@@ -35,11 +35,15 @@ private slots:
 
     void updateListItems();
 
-    void on_bye_clicked();
-
     void itemUpdate_changeText(QListWidgetItem *item);
 
     void on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_actionClear_triggered();
+
+    void on_deleteItem_clicked();
+
+    void deleteItem(QListWidgetItem* item);
 
 private:
     QString currentFile = "";
