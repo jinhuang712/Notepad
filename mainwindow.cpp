@@ -8,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    ui->setupUi(this); 
+    QDir("../Notepad").mkdir("sys");
+    QDir("../Notepad").mkdir("saved");
     this->setCentralWidget(ui->centralWidget);
     populateListItems();
     ui->listWidget->setCurrentRow(0);
@@ -53,7 +55,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
 
 void MainWindow::populateListItems()
 {
-    QDir dir("D:\\daoai\\Notepad\\saved");
+    QDir dir("../Notepad/saved");
     QFileInfoList list = dir.entryInfoList();
     // todo: add sorting for last edited
     for (int i = 2; i < list.size(); i++) {
@@ -64,13 +66,13 @@ void MainWindow::populateListItems()
 
 /* cache functions */
 void MainWindow::clearCache() {
-    QFile file("D:\\daoai\\Notepad\\sys\\cache");
+    QFile file("../Notepad/sys/cache");
     file.remove();
 }
 
 bool MainWindow::checkCache()
 {
-    QFile file("D:\\daoai\\Notepad\\sys\\cache");
+    QFile file("../Notepad/sys/cache");
     return file.exists();
 }
 
@@ -89,7 +91,7 @@ void MainWindow::caches(QString content)
     if (content.size() == 0) {
         clearCache();
     }
-    QFile file("D:\\daoai\\Notepad\\sys\\cache");
+    QFile file("../Notepad/sys/cache");
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
@@ -102,7 +104,7 @@ void MainWindow::caches(QString content)
 void MainWindow::delete_file(QListWidgetItem * item) {
     QString filename = item->text();
     ondelete_updateList(item);
-    QFile file("D:\\daoai\\Notepad\\saved\\"+filename);
+    QFile file("../Notepad/saved/"+filename);
     if (!file.remove()) {
         QMessageBox::warning(this, "Warning", "Cannot delete file: " + file.errorString());
         return;
@@ -111,7 +113,7 @@ void MainWindow::delete_file(QListWidgetItem * item) {
 
 QString MainWindow::getCache()
 {
-    QFile file("D:\\daoai\\Notepad\\sys\\cache");
+    QFile file("../Notepad/sys/cache");
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
         return "";
@@ -205,7 +207,7 @@ void MainWindow::deleteItem(QListWidgetItem* item)
 void MainWindow::saves_file(QListWidgetItem* item)
 {
     QString filename = item->text();
-    QFile file("D:\\daoai\\Notepad\\saved\\"+filename);
+    QFile file("../Notepad/saved/"+filename);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
@@ -241,9 +243,9 @@ void MainWindow::update_textEdit_after_list(QListWidgetItem *item)
 {
     QString tmp;
     if (ui->listWidget->item(0) == item && checkCache()) {
-        tmp = "D:\\daoai\\Notepad\\sys\\cache";
+        tmp = "../Notepad/sys/cache";
     } else {
-        tmp = "D:\\daoai\\Notepad\\saved\\" + item->text();
+        tmp = "../Notepad/saved/" + item->text();
     }
     QFile file(tmp);
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {

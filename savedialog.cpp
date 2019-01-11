@@ -47,7 +47,7 @@ void SaveDialog::setMain(MainWindow *main) {
 void SaveDialog::on_pushButton_clicked()
 {
     QString filename = ui->lineEdit->text();
-    QFile file( "D:\\daoai\\Notepad\\saved\\" + filename);
+    QFile file( "../Notepad/saved/" + filename);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
