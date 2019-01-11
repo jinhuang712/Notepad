@@ -7,3 +7,5 @@
 - delete notes
 - a clear ui
 - able to add new notes
+
+![](example.png)
