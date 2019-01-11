@@ -23,25 +23,38 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     Ui::MainWindow *ui;
     ~MainWindow();
-    void updateList(QString name);
-    void updateList(QListWidgetItem*);
+
+    void updateCurr(QString name);
+
+    void ondelete_updateList(QListWidgetItem*);
+
+    bool checkCache();
+
+    void clearCache();
+
+    bool shouldSaveCache();
+
+    void caches(QString content);
+
+    QString getCache();
+
+    void saves_file(QListWidgetItem *);
+
+    void delete_file(QListWidgetItem *);
 
 private slots:
-    void on_actionNew_triggered();
 
     void populateListItems();
 
     void updateListItems();
 
-    void update_textEdit_after_itemUpdate(QListWidgetItem *item);
+    void update_textEdit(QListWidgetItem *item);
 
     void on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
     void on_deleteItem_clicked();
 
     void deleteItem(QListWidgetItem* item);
-
-    void clearCache();
 
     void on_saveItem_clicked();
 
@@ -50,6 +63,7 @@ private slots:
 private:
     QString currentFile = "";
     void closeEvent (QCloseEvent *event);
+    void newItem();
 };
 
 #endif // MAINWINDOW_H

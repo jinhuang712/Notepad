@@ -8,20 +8,28 @@ SaveDialog::SaveDialog(QWidget *parent) :
     ui(new Ui::SaveDialog)
 {
     ui->setupUi(this);
+    this->main = nullptr;
+    caching = false;
 }
 
-SaveDialog::SaveDialog(QString content,
+SaveDialog::SaveDialog(QString content, MainWindow * main,
                        QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SaveDialog)
 {
     ui->setupUi(this);
+    this->main = main;
     this->content = content;
 }
 
 SaveDialog::~SaveDialog()
 {
     delete ui;
+}
+
+void SaveDialog::setCaching()
+{
+    caching = true;
 }
 
 void SaveDialog::setContent(QString cont)
@@ -44,6 +52,7 @@ void SaveDialog::on_pushButton_clicked()
     QTextStream out(&file);
     out << content;
     file.close();
-    this->main->updateList(filename);
+    this->main->updateCurr(filename);
+    this->main->clearCache();
     this->close();
 }
