@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this); 
+
     QDir("../Notepad").mkdir("sys");
     QDir("../Notepad").mkdir("saved");
     this->setCentralWidget(ui->centralWidget);
