@@ -23,11 +23,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
-    if (!shouldSaveCache()) {
+    if (!checkCache()) {
         saves_file(ui->listWidget->currentItem());
         event->accept();
         return;
     }
+    if (!shouldSaveCache())
+        return;
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Exiting..",
                                                                 tr("Do you wish to save?\n"),
                                                                 QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
@@ -74,10 +76,12 @@ bool MainWindow::checkCache()
 
 bool MainWindow::shouldSaveCache()
 {
+    if (!checkCache())
+        return false;
     if (ui->listWidget->currentRow() == 0
             && ui->textEdit->toPlainText().size() == 0)
         return false;
-    return checkCache();
+    return true;
 }
 
 void MainWindow::caches(QString content)
@@ -134,44 +138,68 @@ void MainWindow::on_saveItem_clicked()
 
 void MainWindow::on_newItem_clicked()
 {
-    //    if ()
-    //    ui->listWidget->insertItem(0, );
+    if (shouldSaveCache()) {
+        QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Exiting..",
+                                                                    tr("Do you wish to save?\n"),
+                                                                    QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                    QMessageBox::Yes);
+        if (resBtn == QMessageBox::No) {
+            deleteItem(ui->listWidget->currentItem());
+        } else if (resBtn == QMessageBox::Cancel){
+            return;
+        } else if (resBtn == QMessageBox::Yes) {
+            QString content;
+            if (ui->listWidget->currentRow() == 0) {
+                content = ui->textEdit->toPlainText();
+            } else {
+                content = getCache();
+            }
+            SaveDialog dialog(content, this);
+            dialog.exec();
+            newItem();
+        }
+    } else if (!checkCache()){
+        newItem();
+
+    }
 }
 
 void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
+    qDebug() << "reached";
     if (previous == nullptr) {
         return;
     }
     if (current == previous) {
         return;
     }
-    if (previous == ui->listWidget->item(0))
+    if (previous == ui->listWidget->item(0) && shouldSaveCache())
         caches(ui->textEdit->toPlainText());
-    else
+    else if (!checkCache())
         saves_file(previous);
-    update_textEdit(current);
+    update_textEdit_after_list(current);
 }
 
 /* helpers */
 
 void MainWindow::newItem() {
-    QListWidgetItem item;
-
-    item.setText("New File..");
-    ui->listWidget->insertItem(0, &item);
+    ui->listWidget->insertItem(0, "New File..");
+    clearCache();
+    caches("");
     ui->listWidget->setCurrentRow(0);
     ui->textEdit->setText("");
+    ui->listWidget->repaint();
 }
 
 void MainWindow::deleteItem(QListWidgetItem* item)
 {
-    if (ui->listWidget->currentRow() == 0 && checkCache()) {
+    if (ui->listWidget->item(0) != item || !checkCache())
+        delete_file(item);
+    else {
         clearCache();
+        caches("");
         ui->textEdit->setText("");
-        return;
     }
-    delete_file(item);
 }
 
 void MainWindow::saves_file(QListWidgetItem* item)
@@ -209,16 +237,11 @@ void MainWindow::updateCurr(QString name)
     ui->listWidget->item(0)->setText(name);
 }
 
-
-void MainWindow::update_textEdit(QListWidgetItem *item)
+void MainWindow::update_textEdit_after_list(QListWidgetItem *item)
 {
     QString tmp;
-    if (ui->listWidget->currentRow() == 0) {
+    if (ui->listWidget->item(0) == item && checkCache()) {
         tmp = "D:\\daoai\\Notepad\\sys\\cache";
-        if (!checkCache()) {
-            ui->textEdit->setText("");
-            return;
-        }
     } else {
         tmp = "D:\\daoai\\Notepad\\saved\\" + item->text();
     }

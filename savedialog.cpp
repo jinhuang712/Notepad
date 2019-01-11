@@ -41,6 +41,9 @@ void SaveDialog::setMain(MainWindow *main) {
     this->main = main;
 }
 
+// this process will
+// - either save or not save the cache
+// - then clears the cache
 void SaveDialog::on_pushButton_clicked()
 {
     QString filename = ui->lineEdit->text();

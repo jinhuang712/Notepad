@@ -26,8 +26,6 @@ public:
 
     void updateCurr(QString name);
 
-    void ondelete_updateList(QListWidgetItem*);
-
     bool checkCache();
 
     void clearCache();
@@ -48,7 +46,7 @@ private slots:
 
     void updateListItems();
 
-    void update_textEdit(QListWidgetItem *item);
+    void update_textEdit_after_list(QListWidgetItem *item);
 
     void on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
@@ -62,8 +60,12 @@ private slots:
 
 private:
     QString currentFile = "";
+
     void closeEvent (QCloseEvent *event);
+
     void newItem();
+
+    void ondelete_updateList(QListWidgetItem*);
 };
 
 #endif // MAINWINDOW_H
