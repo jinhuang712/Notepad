@@ -9,3 +9,5 @@
 - able to add new notes
 
 ![](./example.PNG)
+
+must open and build with Qt Creator for execution :)
