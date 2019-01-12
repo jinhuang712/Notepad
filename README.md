@@ -8,4 +8,4 @@
 - a clear ui
 - able to add new notes
 
-![example](example.png)
+![](./example.PNG)
