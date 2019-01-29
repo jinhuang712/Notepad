@@ -169,7 +169,6 @@ void MainWindow::on_newItem_clicked()
 
 void MainWindow::on_listWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
-    qDebug() << "reached";
     if (previous == nullptr) {
         return;
     }
